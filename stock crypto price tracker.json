@@ -1,0 +1,227 @@
+{
+  "name": "stock crypto price tracker",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -96
+      ],
+      "id": "9d18fb62-819c-48f0-bc08-4574bf803841",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cb66eaa2-5360-4234-bba4-d23a2e4abe3f",
+              "name": "bitcoin",
+              "value": "={{ $json.bitcoin.usd }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        0
+      ],
+      "id": "77268000-8949-4c01-bb47-dafb2025e463",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "10023a70-95cc-4530-8b45-194c1442f624",
+              "name": "tesla",
+              "value": "={{ $json[\"Global Quote\"][\"05. price\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        -192
+      ],
+      "id": "a6fdde8f-606c-4e21-ba1a-6af33b8914f8",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "advanced": true,
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "btc_coin",
+              "field2": "bit_coin"
+            }
+          ]
+        },
+        "joinMode": "keepEverything",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        672,
+        -96
+      ],
+      "id": "2eb26f22-43b9-428c-bb7c-de617baf6013",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "select": "user",
+        "user": {
+          "__rl": true,
+          "value": "U09EGPY465N",
+          "mode": "list",
+          "cachedResultName": "swebafrq1"
+        },
+        "text": "=📊 Market Update -\nfor tesla {{ $json.tesla }} \nfor bitcoin {{ $json.bitcoin }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        896,
+        -96
+      ],
+      "id": "a3810ab6-1d2b-43f9-b175-79b3eded54b8",
+      "name": "Send a message",
+      "webhookId": "f9f85035-1aa4-4dbf-86ce-f2310a77735d",
+      "credentials": {
+        "slackApi": {
+          "id": "WxTMDSOlA1Yj3gn3",
+          "name": "Slack account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "83438f3f-3186-46c3-abd3-077386a5a4c5",
+      "name": "Bit Coin"
+    },
+    {
+      "parameters": {
+        "url": "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=TSLA&apikey=Y0QEDGJS2B0YNQKA",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        224,
+        -192
+      ],
+      "id": "5a524de3-e993-45ff-ac2d-6530392ea2fc",
+      "name": "Tesla"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Bit Coin",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Tesla",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bit Coin": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tesla": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fd51673d-e209-47a9-83a5-e11b1048b820",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8a6784ddd05f80b87830f16ebb1d3f4937caca5ec5eade4c555886b10557a441"
+  },
+  "id": "TdsD1JL3lGfMmgmM",
+  "tags": []
+}
